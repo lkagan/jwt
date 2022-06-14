@@ -11,23 +11,21 @@ const posts = [
     { username: "John", title: "Post 2" },
 ];
 
-app.get("/posts", (req, res) => {
-    res.json(posts);
+app.get("/posts", authenticateToken, (req, res) => {
+    res.json(posts.filter(post => post.username === req.user.name));
 });
 
-app.post("/login", authenticateToken, (req, res) => {
+app.post("/login", (req, res) => {
     // Authenticate user
 
-    const username = req.body.username;
-    const user = { name: username };
-    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-    res.json({ accessToken: accessToken });
+    const user = { name: req.body.username };
+    res.json({ accessToken: jwt.sign(user, process.env.ACCESS_TOKEN_SECRET) });
 });
 
 app.listen(3000);
 
 function authenticateToken(req, res, next) {
-    const token = req.header("authorization").split(" ")[1];
+    const token = req.header("authorization")?.split(" ")[1];
 
     try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
