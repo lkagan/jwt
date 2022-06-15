@@ -19,7 +19,13 @@ app.post("/login", (req, res) => {
     res.json({ accessToken, refreshToken })
 });
 
-// Create a new access token
+/*
+ Create a new access token.
+
+ When tokens expire, the user requests a new one.  A new one is issued only
+ if the refresh token is still valid.  Refresh tokens are removed
+ when some event occurs that requires the user to re-authenticate.
+ */
 app.post('/token', (req, res) => {
     const refreshToken = req.body.token;
 
