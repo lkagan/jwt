@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 
 // Normally kept in some shared key/value store like Redis
-const refreshTokens = [];
+let refreshTokens = [];
 
 app.post("/login", (req, res) => {
     // Authenticate user
@@ -41,6 +41,11 @@ app.post('/token', (req, res) => {
         const accessToken = generateAccessToken({ name: payload.name })
         return res.json(accessToken);
     });
+});
+
+app.delete('/logout', (req, res) => {
+    refreshTokens = refreshTokens.filter(token => token !== req.body.token);
+    res.sendStatus(204);
 });
 
 const generateAccessToken = (user) => {
