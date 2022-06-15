@@ -6,9 +6,22 @@ Content-Type: application/json
   "username": "John"
 }
 
-> {% client.global.set("auth_token", response.body.accessToken); %}
+> {%
+client.global.set("accessToken", response.body.accessToken);
+client.global.set("refreshToken", response.body.refreshToken);
+%}
+
+### RefreshToken
+POST http://localhost:4000/token
+Content-Type: application/json
+
+{
+  "token": "{{refreshToken}}"
+}
+
+> {% client.global.set("accessToken", response.body.accessToken); %}
 
 ### GetPosts
 GET http://localhost:3000/posts
 Content-Type: application/json
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{accessToken}}
